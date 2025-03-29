@@ -1,0 +1,22 @@
+{
+  "chapters": [
+    {
+      "id": 1,
+      "title": "生物特征与分类",
+      "terms": [
+        {
+          "term": "Movement",
+          "chinese": "运动",
+          "explanation": "生物体改变位置或身体部位的能力"
+        },
+        // 添加新术语 ▼
+        {
+          "term": "New Term",
+          "chinese": "新术语",
+          "explanation": "这里是新的解释内容"
+        },
+        // 更多内容...
+      ]
+    }
+  ]
+}
