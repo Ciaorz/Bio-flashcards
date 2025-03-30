@@ -1,56 +1,26 @@
-const biologyData = {
-    chapters: [
+{
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Characteristics and Classification of Living Organisms",
+      "terms": [
         {
-            id: 1,
-            name: "第一章：细胞结构",
-            words: [
-                {
-                    en: "Cell membrane",
-                    cn: "细胞膜",
-                    definition: "The semi-permeable membrane surrounding the cytoplasm of a cell"
-                },
-                {
-                    en: "Cytoplasm",
-                    cn: "细胞质",
-                    definition: "The jelly-like material containing dissolved nutrients"
-                },
-                {
-                    en: "Nucleus",
-                    cn: "细胞核",
-                    definition: "Contains genetic material and controls cell activities"
-                },
-                {
-                    en: "Mitochondria",
-                    cn: "线粒体",
-                    definition: "Site of aerobic respiration producing ATP"
-                }
-            ]
-        },
-        {
-            id: 2,
-            name: "第二章：生物分子",
-            words: [
-                {
-                    en: "Carbohydrate",
-                    cn: "碳水化合物",
-                    definition: "Organic compounds consisting of carbon, hydrogen and oxygen"
-                },
-                {
-                    en: "Protein",
-                    cn: "蛋白质",
-                    definition: "Large molecules made of amino acid chains"
-                },
-                {
-                    en: "Lipid",
-                    cn: "脂类",
-                    definition: "Energy-rich compounds including fats and oils"
-                },
-                {
-                    en: "Enzyme",
-                    cn: "酶",
-                    definition: "Biological catalysts that speed up chemical reactions"
-                }
-            ]
+          "word": "Movement",
+          "zh": "运动",
+          "definition": "An action by an organism causing a change of position or place"
         }
-    ]
-};
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Organisation of the Organism",
+      "terms": [
+        {
+          "word": "Cell",
+          "zh": "细胞",
+          "definition": "Basic structural and functional unit of all living organisms"
+        }
+      ]
+    }
+  ]
+}
