@@ -11,7 +11,7 @@ const state = {
 // 初始化函数
 async function init() {
   // 加载词汇数据
-  const response = await fetch('vocab.json');
+  const response = await fetch('docs/vocab.json');
   const data = await response.json();
   state.allTerms = data.chapters.flatMap(ch => ch.terms);
   
