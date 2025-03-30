@@ -1,272 +1,51 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biology Flashcards</title>
-    <style>
-        :root {
-            --morandi-yellow: #E6D5A5;
-            --text-color: #333;
-        }
-
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-
-        /* 通用样式 */
-        .return-btn {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            padding: 8px 15px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-
-        .search-bar {
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            padding: 8px;
-            width: 200px;
-            z-index: 1000;
-        }
-
-        /* 闪卡通用样式 */
-        .flashcard {
-            position: relative;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            padding: 20px;
-            min-height: 150px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-
-        .flipped {
-            transform: rotateY(180deg);
-        }
-
-        .bookmark-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            font-size: 1.2em;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: #ccc;
-            transition: color 0.3s;
-        }
-
-        .bookmarked .bookmark-btn {
-            color: var(--morandi-yellow);
-        }
-
-        .notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: var(--morandi-yellow);
-            font-size: 0.9em;
-            opacity: 0;
-            animation: fade 2s;
-        }
-
-        @keyframes fade {
-            0%, 100% { opacity: 0; }
-            10%, 90% { opacity: 1; }
-        }
-
-        /* 不同模式布局 */
-        #home {
-            text-align: center;
-        }
-
-        .mode-btn {
-            padding: 15px 30px;
-            margin: 10px;
-            background: white;
-            border: 2px solid #ddd;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .grid-mode {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 40px 20px;
-        }
-
-        .exam-mode {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding-top: 60px;
-        }
-
-        .controls {
-            margin-top: 20px;
-        }
-    </style>
+  <!-- 基础元信息 -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biology Flashcards</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <button class="return-btn" onclick="returnHome()">← 返回</button>
-    <input type="text" class="search-bar" placeholder="搜索词汇..." oninput="searchCards(this.value)">
-    <div id="content"></div>
+  <!-- 首页容器 -->
+  <div id="home" class="container">
+    <h1>生物学闪卡系统</h1>
+    
+    <!-- 模式选择按钮 -->
+    <div class="mode-selector">
+      <button onclick="loadMode('chapter')">章节模式</button>
+      <button onclick="loadMode('random')">随机模式</button>
+      <button onclick="loadFavoriteMode()">收藏模式</button>
+    </div>
+    
+    <!-- 章节列表 (仅章节模式显示) -->
+    <div id="chapterList" class="chapter-grid"></div>
+  </div>
 
-    <script>
-        // 数据存储
-        const data = {
-            chapters: [
-                {
-                    id: 1,
-                    name: "第一章：细胞结构",
-                    words: [
-                        { en: "Cell membrane", cn: "细胞膜", definition: "The semi-permeable membrane surrounding the cytoplasm..." },
-                        { en: "Cytoplasm", cn: "细胞质", definition: "The jelly-like material containing dissolved nutrients" }
-                    ]
-                },
-                {
-                    id: 2,
-                    name: "第二章：生物分子",
-                    words: [
-                        { en: "Carbohydrate", cn: "碳水化合物", definition: "Organic compounds consisting of carbon..." },
-                        { en: "Protein", cn: "蛋白质", definition: "Large molecules made of amino acid chains" }
-                    ]
-                }
-            ]
-        };
+  <!-- 闪卡容器 -->
+  <div id="flashcardContainer" class="container hidden">
+    <!-- 模式切换按钮 -->
+    <div class="nav-buttons">
+      <button onclick="goHome()">返回首页</button>
+      <button onclick="toggleMode()" id="toggleModeBtn">切换为考查模式</button>
+    </div>
+    
+    <!-- 搜索栏 -->
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="搜索词汇..." onkeyup="searchTerms()">
+    </div>
+    
+    <!-- 闪卡展示区 -->
+    <div id="flashcards" class="flashcard-grid"></div>
+    
+    <!-- 进度条 -->
+    <div id="progress" class="progress-bar"></div>
+    
+    <!-- 提示信息 -->
+    <div id="toast" class="toast-notification"></div>
+  </div>
 
-        let currentMode = '';
-        let currentChapter = null;
-        let bookmarks = JSON.parse(localStorage.getItem('bookmarks')) || [];
-
-        // 核心功能
-        function renderHome() {
-            document.getElementById('content').innerHTML = `
-                <div id="home">
-                    <h1>生物学词汇卡</h1>
-                    <button class="mode-btn" onclick="selectMode('chapter')">章节模式</button>
-                    <button class="mode-btn" onclick="selectMode('random')">随机模式</button>
-                    <button class="mode-btn" onclick="selectMode('bookmarked')">收藏模式</button>
-                </div>
-            `;
-        }
-
-        function selectMode(mode) {
-            currentMode = mode;
-            if (mode === 'chapter') {
-                renderChapterSelection();
-            } else {
-                loadDeck(mode);
-            }
-        }
-
-        function renderChapterSelection() {
-            const chaptersHTML = data.chapters.map(ch => `
-                <button class="mode-btn" onclick="loadChapter(${ch.id})">${ch.name}</button>
-            `).join('');
-            document.getElementById('content').innerHTML = `
-                <div id="chapters">
-                    <h2>选择章节</h2>
-                    ${chaptersHTML}
-                </div>
-            `;
-        }
-
-        function loadChapter(chapterId) {
-            currentChapter = data.chapters.find(ch => ch.id === chapterId);
-            loadDeck('chapter');
-        }
-
-        function loadDeck(mode) {
-            let cards = [];
-            if (mode === 'bookmarked') {
-                cards = bookmarks;
-            } else if (mode === 'random') {
-                cards = data.chapters.flatMap(ch => ch.words).sort(() => Math.random() - 0.5);
-            } else {
-                cards = currentChapter.words;
-            }
-            renderDeck(cards);
-        }
-
-        function renderDeck(cards, isExam = false) {
-            const deckHTML = cards.map((card, index) => `
-                <div class="flashcard ${isBookmarked(card) ? 'bookmarked' : ''}" 
-                     onclick="flipCard(this)" 
-                     data-index="${index}">
-                    <button class="bookmark-btn" onclick="toggleBookmark(event, ${JSON.stringify(card)})">★</button>
-                    <div class="front">${card.en}</div>
-                    <div class="back">${card.cn}<br><small>${card.definition}</small></div>
-                </div>
-            `).join('');
-
-            document.getElementById('content').innerHTML = `
-                <div class="${isExam ? 'exam-mode' : 'grid-mode'}">
-                    ${deckHTML}
-                    ${isExam ? `
-                        <div class="controls">
-                            <button onclick="skipCard()">Skip</button>
-                            <button onclick="flipCurrentCard()">Flip</button>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-        }
-
-        // 交互功能
-        function flipCard(card) {
-            card.classList.toggle('flipped');
-        }
-
-        function toggleBookmark(event, card) {
-            event.stopPropagation();
-            const index = bookmarks.findIndex(b => b.en === card.en);
-            if (index === -1) {
-                bookmarks.push(card);
-                showNotification('已收藏');
-            } else {
-                bookmarks.splice(index, 1);
-                showNotification('已取消收藏');
-            }
-            localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
-            event.target.closest('.flashcard').classList.toggle('bookmarked');
-        }
-
-        function showNotification(text) {
-            const noti = document.createElement('div');
-            noti.className = 'notification';
-            noti.textContent = text;
-            document.body.appendChild(noti);
-            setTimeout(() => noti.remove(), 2000);
-        }
-
-        function returnHome() {
-            renderHome();
-        }
-
-        function searchCards(keyword) {
-            // 搜索逻辑实现
-        }
-
-        // 初始化
-        renderHome();
-    </script>
+  <script src="app.js"></script>
 </body>
 </html>
