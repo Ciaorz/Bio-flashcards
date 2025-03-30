@@ -143,3 +143,27 @@ function showToast(message) {
 
 // 初始化执行
 init();
+// 在 init() 函数末尾添加
+console.log('初始化完成，当前词汇数:', state.allTerms.length);
+console.log('收藏数据:', state.favorites);
+// 修改 loadMode 函数
+function loadMode(mode) {
+  console.log(`加载模式: ${mode}`);
+  if (mode === 'favorite' && state.favorites.size === 0) {
+    alert('您尚未收藏任何词汇！');
+    return;
+  }
+  // ...原有代码
+}
+/* 在 styles.css 添加 */
+@media (max-width: 480px) {
+  .flashcard {
+    font-size: 14px;
+    padding: 15px;
+  }
+  
+  .favorite-star {
+    width: 20px;
+    height: 20px;
+  }
+}
