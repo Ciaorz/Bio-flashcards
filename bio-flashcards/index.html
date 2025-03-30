@@ -3,26 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生物学习闪卡</title>
+    <title>Biology Flashcards</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <!-- 控制栏 -->
-        <div class="control-bar">
-            <input type="text" id="searchInput" placeholder="搜索术语...">
-            <select id="chapterSelect">
-                <option value="all">所有章节</option>
-            </select>
+    <!-- 动态内容容器 -->
+    <div id="app">
+        <div class="header">
+            <button onclick="location.reload()" class="home-btn">🏠 首页</button>
+            <input type="text" id="search" placeholder="搜索词汇...">
         </div>
-
-        <!-- 闪卡容器 -->
-        <div id="cardContainer" class="card-container"></div>
-
-        <!-- 移动端优化 -->
-        <div class="mobile-tips">提示：左右滑动切换卡片</div>
+        <div id="content"></div>
     </div>
-
+    <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
